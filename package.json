@@ -1,0 +1,21 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "Бэкенд дипломного проекта \"MoviesExplorer \" Яндекс Практикум",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyzhukIgor/movies-explorer-api.git"
+  },
+  "author": "Igor Ryzhuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RyzhukIgor/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/RyzhukIgor/movies-explorer-api#readme"
+}
