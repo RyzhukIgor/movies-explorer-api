@@ -52,20 +52,19 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  const { moveiId } = req.params;
-  const { userId } = req.user._id;
-  Movie.findById(moveiId)
+  const { movieId } = req.params;
+  Movie.findById(movieId)
     .orFail(() => {
       throw new ErrorNotFound('фильм не найден');
     })
     .then((movie) => {
-      const ownerId = movie.owner.id;
-      if (ownerId !== userId) {
+      const owner = movie.owner.id;
+      if (owner.toString() !== req.user._id) {
         next(new ForBiddenErr('У вас нет доступа к удалению этого фильма'));
       }
-      return Movie.findByIdAndDelete(movie)
+      return Movie.findByIdAndDelete(movieId)
         .then(() => {
-          res.send({ message: 'Фильм удалена' });
+          res.send({ message: 'Фильм удален' });
         });
     })
     .catch((error) => {

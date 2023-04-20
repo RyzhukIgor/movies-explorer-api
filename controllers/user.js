@@ -24,11 +24,15 @@ module.exports.getUserInfo = (req, res, next) => {
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { email, name } = req.body;
-  User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { email, name },
+    { new: true, runValidators: true },
+  )
     .orFail(() => {
       throw new ErrorNotFound('Пользователь не найден');
     })
-    .then((user) => res.status(STATUS_OK).send({ data: user }))
+    .then((user) => res.status(STATUS_OK).send({ user }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ErrorBadRequest('Переданы некорректные данные'));
