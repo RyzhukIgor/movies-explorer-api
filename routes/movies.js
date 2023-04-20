@@ -3,7 +3,7 @@ const {
   getMovies,
   createMovie,
   deleteMovie,
-} = require('../controllers/movies');
+} = require('../controllers/movie');
 
 router.get('/', getMovies);
 router.post('/', createMovie);

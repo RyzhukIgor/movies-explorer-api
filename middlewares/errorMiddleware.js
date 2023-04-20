@@ -3,6 +3,7 @@ module.exports = ((err, req, res, next) => {
   if (statusCode === 500) {
     res.status(500).send({ message: 'Внутренняя ошибка сервера' });
     next();
+    console.log(err);
   } else {
     res.status(statusCode).send({ message: err.message });
     next();

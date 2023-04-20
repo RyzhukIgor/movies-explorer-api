@@ -4,7 +4,7 @@ const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ConflictUserErr = require('../errors/ConflictUserErr');
 const NotAuthError = require('../errors/NotAuthError');
-const User = require('../models/users');
+const User = require('../models/user');
 const { JWT_SECRET } = require('../utils/configurations');
 
 const {
@@ -13,7 +13,8 @@ const {
 } = require('../errors/errors');
 
 module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
+  const userId = req.user._id;
+  User.findById(userId)
     .orFail(() => {
       throw new ErrorNotFound('Пользователь не найден');
     })
