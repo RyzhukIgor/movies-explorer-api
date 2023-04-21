@@ -5,11 +5,14 @@ const { errors } = require('celebrate');
 const routes = require('./routes/index');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const { PORT, DB_URL } = require('./utils/configurations');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
+app.use(requestLogger);
 app.use(helmet());
 app.use(express.json());
 app.use(routes);
+app.use(errorLogger);
 app.use(errors());
 app.use(errorMiddleware);
 
