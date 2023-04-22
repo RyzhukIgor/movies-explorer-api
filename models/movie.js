@@ -14,14 +14,14 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  year: [{
+  year: {
     type: String,
     required: true,
-  }],
-  description: [{
+  },
+  description: {
     type: String,
     required: true,
-  }],
+  },
   image: {
     type: String,
     required: true,

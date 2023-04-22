@@ -6,9 +6,13 @@ const ConflictUserErr = require('../errors/ConflictUserErr');
 const NotAuthError = require('../errors/NotAuthError');
 const User = require('../models/user');
 const { JWT_SECRET } = require('../utils/configurations');
-
 const {
-  STATUS_OK,
+  USER_NOT_FOUND_MESSAGE,
+  USER_ACCOUNT_ALREADY_EXISTS,
+  USER_INCORRECT_DATA,
+  INCORRECT_EMAIL_OR_PASSWORD,
+} = require('../utils/constants');
+const {
   STATUS_CREATED,
 } = require('../errors/errors');
 
@@ -16,7 +20,7 @@ module.exports.getUserInfo = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(() => {
-      throw new ErrorNotFound('Пользователь не найден');
+      throw new ErrorNotFound(USER_NOT_FOUND_MESSAGE);
     })
     .then((user) => res.send(user))
     .catch(next);
@@ -27,15 +31,19 @@ module.exports.updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { email, name },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true, upsert: false },
   )
-    .orFail(() => {
-      throw new ErrorNotFound('Пользователь не найден');
+    .then((user) => {
+      if (!user) {
+        throw new ErrorNotFound(USER_NOT_FOUND_MESSAGE);
+      }
+      res.send(user);
     })
-    .then((user) => res.status(STATUS_OK).send({ user }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new ErrorBadRequest('Переданы некорректные данные'));
+      if (error.code === 11000) {
+        next(new ConflictUserErr(USER_ACCOUNT_ALREADY_EXISTS));
+      } else if (error.name === 'ValidationError') {
+        next(new ErrorBadRequest(USER_INCORRECT_DATA));
       } else {
         next(error);
       }
@@ -53,9 +61,9 @@ module.exports.createUser = (req, res, next) => {
     .then(() => res.status(STATUS_CREATED).send({ message: 'Пользователь создан' }))
     .catch((error) => {
       if (error.code === 11000) {
-        next(new ConflictUserErr('Аккаунт с данным email зарегистрирован'));
+        next(new ConflictUserErr(USER_ACCOUNT_ALREADY_EXISTS));
       } else if (error.name === 'ValidationError') {
-        next(new ErrorBadRequest('Переданы некорректные данные'));
+        next(new ErrorBadRequest(USER_INCORRECT_DATA));
       } else {
         next(error);
       }
@@ -65,11 +73,11 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
-    .orFail(() => { throw new NotAuthError('Неправильные почта или пароль'); })
+    .orFail(() => { throw new NotAuthError(INCORRECT_EMAIL_OR_PASSWORD); })
     .then((user) => bcrypt.compare(password, user.password)
       .then((matched) => {
         if (!matched) {
-          throw NotAuthError('Неправильные почта или пароль');
+          throw NotAuthError(INCORRECT_EMAIL_OR_PASSWORD);
         }
         return user;
       }))
