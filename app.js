@@ -18,6 +18,14 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorMiddleware);
 
-mongoose.connect(DB_URL);
+mongoose.connect(DB_URL)
+  .then(() => {
+    console.log('Connected');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Listing on port ${PORT}`);
+});
