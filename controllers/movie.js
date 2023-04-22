@@ -5,7 +5,7 @@ const ForBiddenErr = require('../errors/ForBiddenErr');
 const {
   USER_INCORRECT_DATA,
   MOVIE_NOT_FOUND,
-  NOT_ACCESS_DELETE,
+  MOVIE_ACCESS_FAIL,
 } = require('../utils/constants');
 const { STATUS_CREATED } = require('../errors/errors');
 
@@ -70,7 +70,7 @@ module.exports.deleteMovie = (req, res, next) => {
           })
           .catch(next);
       } else {
-        throw new ForBiddenErr(NOT_ACCESS_DELETE);
+        throw new ForBiddenErr(MOVIE_ACCESS_FAIL);
       }
     })
     .catch((error) => {
