@@ -1,6 +1,6 @@
 const allowedCors = [
-  'http://api.bitfilms.nomoredomains.monster',
-  'https://api.bitfilms.nomoredomains.monster',
+  'http://bitfilms.nomoredomains.monster',
+  'https://bitfilms.nomoredomains.monster',
   'localhost:3000',
 ];
 
